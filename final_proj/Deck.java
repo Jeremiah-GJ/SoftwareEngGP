@@ -1,6 +1,6 @@
-package gui;
+package final_proj;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Deck {
 	
@@ -34,6 +34,10 @@ public class Deck {
 		
 		return tc;
 		
+	}
+	
+	public void shuffle() {
+		Collections.shuffle(deck);
 	}
 	
 	

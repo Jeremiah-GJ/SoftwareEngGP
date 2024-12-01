@@ -1,12 +1,14 @@
-package gui;
+package final_proj;
 
 public class Card {
 	
 	public String Name;
 	public String Type;
 	public String image;
+	public int Id;
 	
-	public Card(String name, String type) {
+	public Card(int id,String name, String type) {
+		Id = id;
 		Name = name;
 		Type = type;
 		
@@ -22,6 +24,10 @@ public class Card {
 	
 	public String getImage() {
 		return image;
+	}
+	
+	public int getID() {
+		return Id;
 	}
 
 }

@@ -1,4 +1,4 @@
-package gui;
+package final_proj;
 
 import javax.swing.JPanel;
 import java.awt.GridLayout;
