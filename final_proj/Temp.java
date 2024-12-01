@@ -28,7 +28,7 @@ public class Temp {
         deck1Cards.add(new Card(14, "Alpha the Magnet Warrior", "Monster"));
         deck1Cards.add(new Card(15, "Beta the Magnet Warrior", "Monster"));
         deck1Cards.add(new Card(16, "Gamma the Magnet Warrior", "Monster"));
-        deck1Cards.add(new Card(17, "Valkyrion the Magnet Warrior", "Monster"));
+        deck1Cards.add(new Card(17, "Valkyrion the Magna Warrior", "Monster"));
         deck1Cards.add(new Card(18, "Buster Blader", "Monster"));
         deck1Cards.add(new Card(19, "Mirror Force", "Trap"));
         deck1Cards.add(new Card(20, "Dark Magic Attack", "Spell"));
