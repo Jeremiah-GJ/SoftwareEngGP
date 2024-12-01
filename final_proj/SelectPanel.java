@@ -16,10 +16,10 @@ public class SelectPanel extends JPanel {
 	 */
 	public SelectPanel() {
 		
-		 ImageIcon ch1 = new ImageIcon("path/to/your/image.png");
-		 ImageIcon ch2 = new ImageIcon("path/to/your/image.png");
-		 ImageIcon ch3 = new ImageIcon("path/to/your/image.png");
-		 ImageIcon ch4 = new ImageIcon("path/to/your/image.png");
+		 ImageIcon ch1 = new ImageIcon("final_proj/Yugi_Portrait.png");
+		 ImageIcon ch2 = new ImageIcon("final_proj/Joey_Portrait.png");
+		 ImageIcon ch3 = new ImageIcon("final_proj/Kaiba_Portrait.png");
+		 ImageIcon ch4 = new ImageIcon("final_proj/Weevil_Portrait.png");
 		 
 		setBackground(new Color(128, 0, 255));
 		setLayout(null);
