@@ -4,6 +4,8 @@ package final_proj;
 import java.awt.*;
 import javax.swing.*;
 import java.io.IOException;
+import java.util.HashMap;
+
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 
@@ -12,6 +14,9 @@ public class ChatServer extends AbstractServer {
     private JLabel status;
     private boolean running = false;
     private Database database;
+
+    // Track player deck selections
+    private HashMap<ConnectionToClient, String> playerDecks = new HashMap<>();
 
     public ChatServer() {
         super(12345);
@@ -34,71 +39,153 @@ public class ChatServer extends AbstractServer {
         this.database = database;
     }
 
+    @Override
     public void serverStarted() {
         running = true;
         status.setText("Listening");
         status.setForeground(Color.GREEN);
-        log.append("Server started\n");
+        if (log != null) {
+            log.append("Server started\n");
+        }
     }
 
+    @Override
     public void serverStopped() {
         status.setText("Stopped");
         status.setForeground(Color.RED);
-        log.append("Server stopped accepting new clients - press Listen to start accepting new clients\n");
+        if (log != null) {
+            log.append("Server stopped accepting new clients - press Listen to start accepting new clients\n");
+        }
     }
 
+    @Override
     public void serverClosed() {
         running = false;
         status.setText("Close");
         status.setForeground(Color.RED);
-        log.append("Server and all current clients are closed - press Listen to restart\n");
+        if (log != null) {
+            log.append("Server and all current clients are closed - press Listen to restart\n");
+        }
     }
 
+    @Override
     public void clientConnected(ConnectionToClient client) {
-        log.append("Client " + client.getId() + " connected\n");
+        if (log != null) {
+            log.append("Client " + client.getId() + " connected\n");
+        }
     }
 
-    public void handleMessageFromClient(Object arg0, ConnectionToClient arg1) {
-        if (arg0 instanceof LoginData) {
-            LoginData data = (LoginData) arg0;
+    @Override
+    public void handleMessageFromClient(Object msg, ConnectionToClient client) {
+        if (msg instanceof String) {
+            String message = (String) msg;
+
+            // Handle deck selection
+            if (message.startsWith("DeckSelected:")) {
+                String selectedDeck = message.substring(13); // Extract the deck name
+                playerDecks.put(client, selectedDeck);
+
+                // Log the deck selection to the JTextArea
+                if (log != null) {
+                    SwingUtilities.invokeLater(() -> {
+                        log.append("Client " + client.getId() + " selected deck: " + selectedDeck + "\n");
+                    });
+                } else {
+                    System.out.println("Log is null when processing deck selection.");
+                }
+
+                // Check if both players are ready
+                if (playerDecks.size() == 2) {
+                    sendStartGameMessage();
+                }
+            }
+        }
+
+        // Existing login logic
+        else if (msg instanceof LoginData) {
+            LoginData data = (LoginData) msg;
             Object result;
             if (database.verifyAccount(data.getUsername(), data.getPassword())) {
                 result = "LoginSuccessful";
-                log.append("Client " + arg1.getId() + " successfully logged in as " + data.getUsername() + "\n");
+                if (log != null) {
+                    log.append("Client " + client.getId() + " successfully logged in as " + data.getUsername() + "\n");
+                }
             } else {
                 result = new Error("The username and password are incorrect.", "Login");
-                log.append("Client " + arg1.getId() + " failed to log in\n");
+                if (log != null) {
+                    log.append("Client " + client.getId() + " failed to log in\n");
+                }
             }
 
             try {
-                arg1.sendToClient(result);
+                client.sendToClient(result);
             } catch (IOException e) {
                 return;
             }
-        } else if (arg0 instanceof CreateAccountData) {
-            CreateAccountData data = (CreateAccountData) arg0;
+        }
+
+        // Existing account creation logic
+        else if (msg instanceof CreateAccountData) {
+            CreateAccountData data = (CreateAccountData) msg;
             Object result;
             if (database.createNewAccount(data.getUsername(), data.getPassword())) {
                 result = "CreateAccountSuccessful";
-                log.append("Client " + arg1.getId() + " created a new account called " + data.getUsername() + "\n");
+                if (log != null) {
+                    log.append("Client " + client.getId() + " created a new account called " + data.getUsername() + "\n");
+                }
             } else {
                 result = new Error("The username is already in use.", "CreateAccount");
-                log.append("Client " + arg1.getId() + " failed to create a new account\n");
+                if (log != null) {
+                    log.append("Client " + client.getId() + " failed to create a new account\n");
+                }
             }
 
             try {
-                arg1.sendToClient(result);
+                client.sendToClient(result);
             } catch (IOException e) {
                 return;
             }
         }
     }
 
+    public void testLogMessage(String message) {
+        if (log != null) {
+            SwingUtilities.invokeLater(() -> {
+                log.append(message + "\n");
+            });
+        } else {
+            System.out.println("Log is null in testLogMessage.");
+        }
+    }
+
+    @Override
     public void listeningException(Throwable exception) {
         running = false;
         status.setText("Exception occurred while listening");
         status.setForeground(Color.RED);
-        log.append("Listening exception: " + exception.getMessage() + "\n");
-        log.append("Press Listen to restart server\n");
+        if (log != null) {
+            log.append("Listening exception: " + exception.getMessage() + "\n");
+            log.append("Press Listen to restart server\n");
+        }
+    }
+
+    // Notify both players to start the game
+    private void sendStartGameMessage() {
+        for (ConnectionToClient client : playerDecks.keySet()) {
+            String selectedDeck = playerDecks.get(client);
+            try {
+                client.sendToClient("StartGame:" + selectedDeck); // Notify the client to start the game
+                if (log != null) {
+                    log.append("Sent StartGame message to client " + client.getId() + " with deck: " + selectedDeck + "\n");
+                }
+            } catch (IOException e) {
+                if (log != null) {
+                    log.append("Error sending StartGame message to client " + client.getId() + ": " + e.getMessage() + "\n");
+                }
+            }
+        }
+
+        // Reset the deck selections for future games
+        playerDecks.clear();
     }
 }
