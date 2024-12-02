@@ -7,10 +7,11 @@ public class Card {
 	public String image;
 	public int Id;
 	
-	public Card(int id,String name, String type) {
+	public Card(int id,String name, String type, String image) {
 		Id = id;
 		Name = name;
 		Type = type;
+		image = image;
 		
 	}
 	
