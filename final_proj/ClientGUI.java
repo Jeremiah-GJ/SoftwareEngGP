@@ -1,4 +1,5 @@
 //ClientGUI.java
+
 package final_proj;
 
 import javax.swing.*;
@@ -17,7 +18,7 @@ public class ClientGUI extends JFrame {
             e.printStackTrace();
         }
 
-        this.setTitle("Chat Client");
+        this.setTitle("Yu-Gi-Oh Deck Selector");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         CardLayout cardLayout = new CardLayout();
@@ -33,19 +34,35 @@ public class ClientGUI extends JFrame {
         JPanel view1 = new InitialPanel(ic);
         JPanel view2 = new LoginPanel(lc);
         JPanel view3 = new CreateAccountPanel(cac);
-        JPanel view4 = new ContactsPanel(cardLayout, container); // Pass cardLayout and container
+        JPanel view4 = new SelectPanel(cardLayout, container, client);
+
+        // Create the larger GamePanel with a bigger preferred size
+        GamePanel gamePanel = new GamePanel();
+        gamePanel.setPreferredSize(new Dimension(1200, 800)); // Larger GamePanel size
 
         container.add(view1, "1");
         container.add(view2, "2");
         container.add(view3, "3");
         container.add(view4, "4");
+        container.add(gamePanel, "GamePanel"); // Add GamePanel to the card layout
 
         cardLayout.show(container, "1");
 
         this.setLayout(new GridBagLayout());
         this.add(container);
 
-        this.setSize(550, 350);
+        // Set frame size to match the default size of other panels
+        this.setSize(800, 600); // Default dimensions
+        this.setResizable(false); // Disable resizing for consistent appearance
+
+        // Add a component listener to dynamically resize the frame when showing GamePanel
+        gamePanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                setSize(gamePanel.getPreferredSize());
+                setResizable(false); // Prevent resizing during gameplay
+            }
+        });
+
         this.setVisible(true);
     }
 
@@ -53,3 +70,6 @@ public class ClientGUI extends JFrame {
         new ClientGUI();
     }
 }
+
+
+
