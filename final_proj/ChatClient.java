@@ -39,10 +39,18 @@ public class ChatClient extends AbstractClient {
                 SwingUtilities.invokeLater(() -> {
                     GamePanel.updateOpponentLabel(opponentUsername);
                 });
-            } else if (message.equals("PONG")) {
-                // Display the interaction on the GamePanel
+            } else if (message.startsWith("PONG:")) {
+                // Parse the enriched PONG message
+                String[] parts = message.split(":");
+                String opponentUsername = parts.length > 1 ? parts[1] : "Unknown Opponent";
+                String opponentDeck = parts.length > 2 ? parts[2] : "Unknown Deck";
+
+                // Debug log
+                System.out.println("Parsed PONG message - Opponent: " + opponentUsername + ", Deck: " + opponentDeck);
+
+                // Display the information
                 SwingUtilities.invokeLater(() -> {
-                    GamePanel.updateOpponentLabel("PONG received!");
+                    GamePanel.updateOpponentLabel("Opponent: " + opponentUsername + " (Deck: " + opponentDeck + ")");
                 });
             }
         } else if (arg0 instanceof Error) {
@@ -55,6 +63,9 @@ public class ChatClient extends AbstractClient {
             }
         }
     }
+
+
+
 
 
 

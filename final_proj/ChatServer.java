@@ -15,8 +15,11 @@ public class ChatServer extends AbstractServer {
     private boolean running = false;
     private Database database;
 
-    // Track player deck selections
-    private HashMap<ConnectionToClient, String> playerDecks = new HashMap<>();
+    // Track player deck selections using client IDs
+    private HashMap<Long, String> playerDecks = new HashMap<>();
+
+    // Track client usernames using client IDs
+    private HashMap<Long, String> clientUsernames = new HashMap<>();
 
     public ChatServer() {
         super(12345);
@@ -83,37 +86,37 @@ public class ChatServer extends AbstractServer {
             // Handle deck selection
             if (message.startsWith("DeckSelected:")) {
                 String selectedDeck = message.substring(13); // Extract the deck name
-                playerDecks.put(client, selectedDeck);
+                playerDecks.put(client.getId(), selectedDeck);
+                System.out.println("Deck assigned to client ID " + client.getId() + ": " + selectedDeck);
+
+                // Debug log for playerDecks map
+                System.out.println("Current playerDecks map: " + playerDecks);
 
                 // Log the deck selection to the JTextArea
                 if (log != null) {
                     SwingUtilities.invokeLater(() -> {
                         log.append("Client " + client.getId() + " selected deck: " + selectedDeck + "\n");
                     });
-                } else {
-                    System.out.println("Log is null when processing deck selection.");
-                }
-
-                // Check if both players are ready
-                if (playerDecks.size() == 2) {
-                    sendStartGameMessage();
                 }
             }
             // Handle opponent username propagation
             else if (message.startsWith("LOGIN:")) {
                 String username = message.substring(6);
-                client.setInfo("username", username);
+                clientUsernames.put(client.getId(), username);
+                System.out.println("Stored username for client ID " + client.getId() + ": " + username);
+
+                // Debug log for clientUsernames map
+                System.out.println("Current clientUsernames map: " + clientUsernames);
 
                 // Notify all other clients about this user
                 for (Thread clientThread : getClientConnections()) {
                     ConnectionToClient otherClient = (ConnectionToClient) clientThread;
-                    if (!otherClient.equals(client)) { // Don't send to the same client
+                    if (!otherClient.equals(client)) {
                         try {
-                            // Debug log for server
-                            System.out.println("Sending opponent username to client " + otherClient.getId() + ": " + username);
+                            System.out.println("Sending username to opponent client " + otherClient.getId());
                             otherClient.sendToClient("OPPONENT:" + username);
 
-                            String otherUsername = (String) otherClient.getInfo("username");
+                            String otherUsername = clientUsernames.getOrDefault(otherClient.getId(), "Unknown User");
                             System.out.println("Sending opponent username to client " + client.getId() + ": " + otherUsername);
                             client.sendToClient("OPPONENT:" + otherUsername);
                         } catch (IOException e) {
@@ -124,22 +127,30 @@ public class ChatServer extends AbstractServer {
             }
             // Handle PING-PONG interaction
             else if (message.equals("PING")) {
-                // Forward "PONG" to the other client
                 for (Thread clientThread : getClientConnections()) {
                     ConnectionToClient otherClient = (ConnectionToClient) clientThread;
-                    if (!otherClient.equals(client)) { // Skip the sender
+                    if (!otherClient.equals(client)) {
                         try {
-                            System.out.println("Forwarding PONG to client " + otherClient.getId());
-                            otherClient.sendToClient("PONG");
+                            // Retrieve opponent's username and deck using client IDs
+                            String opponentUsername = clientUsernames.getOrDefault(otherClient.getId(), "Unknown User");
+                            String opponentDeck = playerDecks.getOrDefault(otherClient.getId(), "Unknown Deck");
+
+                            // Debug logs
+                            System.out.println("PING Handling - Opponent Username: " + opponentUsername);
+                            System.out.println("PING Handling - Opponent Deck: " + opponentDeck);
+
+                            String pongMessage = "PONG:" + opponentUsername + ":" + opponentDeck;
+                            System.out.println("Sending PONG to client " + client.getId() + ": " + pongMessage);
+                            client.sendToClient(pongMessage);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        break; // Only handle the first opponent found
                     }
                 }
             }
         }
 
-        // Existing login logic
         else if (msg instanceof LoginData) {
             LoginData data = (LoginData) msg;
             Object result;
@@ -154,7 +165,6 @@ public class ChatServer extends AbstractServer {
                     log.append("Client " + client.getId() + " failed to log in\n");
                 }
             }
-
             try {
                 client.sendToClient(result);
             } catch (IOException e) {
@@ -162,7 +172,6 @@ public class ChatServer extends AbstractServer {
             }
         }
 
-        // Existing account creation logic
         else if (msg instanceof CreateAccountData) {
             CreateAccountData data = (CreateAccountData) msg;
             Object result;
@@ -177,7 +186,6 @@ public class ChatServer extends AbstractServer {
                     log.append("Client " + client.getId() + " failed to create a new account\n");
                 }
             }
-
             try {
                 client.sendToClient(result);
             } catch (IOException e) {
@@ -185,9 +193,6 @@ public class ChatServer extends AbstractServer {
             }
         }
     }
-
-
-
 
     public void testLogMessage(String message) {
         if (log != null) {
@@ -210,23 +215,26 @@ public class ChatServer extends AbstractServer {
         }
     }
 
-    // Notify both players to start the game
     private void sendStartGameMessage() {
-        for (ConnectionToClient client : playerDecks.keySet()) {
-            String selectedDeck = playerDecks.get(client);
-            try {
-                client.sendToClient("StartGame:" + selectedDeck); // Notify the client to start the game
-                if (log != null) {
-                    log.append("Sent StartGame message to client " + client.getId() + " with deck: " + selectedDeck + "\n");
-                }
-            } catch (IOException e) {
-                if (log != null) {
-                    log.append("Error sending StartGame message to client " + client.getId() + ": " + e.getMessage() + "\n");
+        for (Long clientId : playerDecks.keySet()) {
+            String selectedDeck = playerDecks.get(clientId);
+            for (Thread clientThread : getClientConnections()) {
+                ConnectionToClient client = (ConnectionToClient) clientThread;
+                if (client.getId() == clientId) {
+                    try {
+                        client.sendToClient("StartGame:" + selectedDeck);
+                        if (log != null) {
+                            log.append("Sent StartGame message to client " + client.getId() + " with deck: " + selectedDeck + "\n");
+                        }
+                    } catch (IOException e) {
+                        if (log != null) {
+                            log.append("Error sending StartGame message to client " + client.getId() + ": " + e.getMessage() + "\n");
+                        }
+                    }
+                    break;
                 }
             }
         }
-
-        // Reset the deck selections for future games
         playerDecks.clear();
     }
 }
