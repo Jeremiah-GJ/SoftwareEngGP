@@ -54,14 +54,14 @@ public class SelectPanel extends JPanel {
                 }
 
                 System.out.println("Selected Deck: " + selectedDeck);
-                cardLayout.show(container, "GamePanel");
+                cardLayout.show(container, "5");
             });
             deckPanel.add(selectButton, BorderLayout.SOUTH);
 
             add(deckPanel);
         }
 
-        setPreferredSize(new Dimension(1000, 800));
+        setPreferredSize(new Dimension(1000, 500));
     }
 
     private ImageIcon scaleImageIcon(ImageIcon icon, int width, int height) {

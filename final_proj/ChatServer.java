@@ -4,7 +4,8 @@ package final_proj;
 import java.awt.*;
 import javax.swing.*;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.*;
+
 
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -17,6 +18,8 @@ public class ChatServer extends AbstractServer {
 
     // Track player deck selections
     private HashMap<ConnectionToClient, String> playerDecks = new HashMap<>();
+    
+    private Set<ConnectionToClient> clients = new HashSet<>();
 
     public ChatServer() {
         super(12345);
@@ -70,6 +73,7 @@ public class ChatServer extends AbstractServer {
 
     @Override
     public void clientConnected(ConnectionToClient client) {
+    	 clients.add(client);
         if (log != null) {
             log.append("Client " + client.getId() + " connected\n");
         }
@@ -98,6 +102,9 @@ public class ChatServer extends AbstractServer {
                 if (playerDecks.size() == 2) {
                     sendStartGameMessage();
                 }
+            }
+            if (message.startsWith("+")) {
+            	sendCall(client);
             }
         }
 
@@ -187,5 +194,30 @@ public class ChatServer extends AbstractServer {
 
         // Reset the deck selections for future games
         playerDecks.clear();
+    }
+    
+    private void sendCall(ConnectionToClient client) {
+    	for (ConnectionToClient otherClient : clients) {
+            if (otherClient != client) {
+                // Get the deck selection of the current client
+                String selectedDeck = playerDecks.get(client);
+                int clientId = (int) client.getId();
+
+                // Construct the message
+                String message = "Opponent ID:" + clientId + ". Opponent Deck selected:" + selectedDeck;
+
+                // Send the message to the other client
+                try {
+                    otherClient.sendToClient(message);
+                    if (log != null) {
+                        log.append("Sent ID and Deck to client " + otherClient.getId() + ": " + selectedDeck + "\n");
+                    }
+                } catch (IOException e) {
+                    if (log != null) {
+                        log.append("Error sending ID and Deck message to client " + otherClient.getId() + ": " + e.getMessage() + "\n");
+                    }
+                }
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ import ocsf.client.AbstractClient;
 public class ChatClient extends AbstractClient {
     private LoginControl loginControl;
     private CreateAccountControl createAccountControl;
+    private GameController gamc;
 
     public ChatClient() {
         super("localhost", 8300);
@@ -18,6 +19,9 @@ public class ChatClient extends AbstractClient {
     public void setCreateAccountControl(CreateAccountControl createAccountControl) {
         this.createAccountControl = createAccountControl;
     }
+    public void setGameControl(GameController gc) {
+    	gamc = gc;
+    }
 
     @Override
     public void handleMessageFromServer(Object arg0) {
@@ -28,6 +32,9 @@ public class ChatClient extends AbstractClient {
                 loginControl.loginSuccess();
             } else if (message.equals("CreateAccountSuccessful")) {
                 createAccountControl.createAccountSuccess();
+            }
+            else if(message.contains("Opponent ID:")) {
+            	gamc.callRec(message);
             }
         } else if (arg0 instanceof Error) {
             Error error = (Error) arg0;
