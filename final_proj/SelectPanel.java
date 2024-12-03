@@ -1,60 +1,78 @@
+//SelectPanel.java
 package final_proj;
 
-import javax.swing.JPanel;
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-
+// Correct class definition
 public class SelectPanel extends JPanel {
+    private static final long serialVersionUID = 1L;
+    private String selectedDeck;
+    private ChatClient chatClient; // Moved inside the class
 
-	private static final long serialVersionUID = 1L;
-	
-	/**
-	 * Create the panel.
-	 */
-	public SelectPanel() {
-		
-		 ImageIcon ch1 = new ImageIcon("final_proj/Yugi_Portrait.png");
-		 ImageIcon ch2 = new ImageIcon("final_proj/Joey_Portrait.png");
-		 ImageIcon ch3 = new ImageIcon("final_proj/Kaiba_Portrait.png");
-		 ImageIcon ch4 = new ImageIcon("final_proj/Weevil_Portrait.png");
-		 
-		setBackground(new Color(128, 0, 255));
-		setLayout(null);
-		
-		JButton Select1 = new JButton("Select");
-		Select1.setBounds(82, 109, 98, 30);
-		add(Select1);
-		
-		JButton Select2 = new JButton("Select");
-		Select2.setBounds(679, 114, 98, 30);
-		add(Select2);
-		
-		JButton Select3 = new JButton("Select");
-		Select3.setBounds(82, 343, 98, 30);
-		add(Select3);
-		
-		JButton Select4 = new JButton("Select");
-		Select4.setBounds(679, 348, 98, 30);
-		add(Select4);
-		
-		JLabel Chr1 = new JLabel(ch1);
-		Chr1.setBounds(82, 29, 98, 70);
-		add(Chr1);
-		
-		JLabel Chr2 = new JLabel(ch2);
-		Chr2.setBounds(679, 29, 98, 70);
-		add(Chr2);
-		
-		JLabel Chr3 = new JLabel(ch3);
-		Chr3.setBounds(82, 257, 98, 70);
-		add(Chr3);
-		
-		JLabel Chr4 = new JLabel(ch4);
-		Chr4.setBounds(679, 257, 98, 70);
-		add(Chr4);
+    public SelectPanel(CardLayout cardLayout, JPanel container, ChatClient chatClient) {
+        this.chatClient = chatClient; // Initialize the ChatClient
+        setBackground(Color.DARK_GRAY);
+        setLayout(new GridLayout(2, 2, 20, 20));
 
-	}
+        // Deck information
+        String[] deckNames = {"Yugi", "Joey", "Kaiba", "Weevil"};
+        String[] imagePaths = {
+                "/final_proj/Yugi_Portrait.png",
+                "/final_proj/Joey_Portrait.png",
+                "/final_proj/Kaiba_Portrait.png",
+                "/final_proj/Weevil_Portrait.png"
+        };
+
+        for (int i = 0; i < deckNames.length; i++) {
+            JPanel deckPanel = new JPanel(new BorderLayout());
+            deckPanel.setBackground(Color.DARK_GRAY);
+
+            URL imageURL = getClass().getResource(imagePaths[i]);
+            JLabel characterLabel;
+            if (imageURL != null) {
+                ImageIcon characterImage = new ImageIcon(imageURL);
+                characterImage = scaleImageIcon(characterImage, 200, 200);
+                characterLabel = new JLabel(characterImage);
+            } else {
+                System.out.println("Image not found: " + imagePaths[i]);
+                characterLabel = new JLabel("Image not found");
+                characterLabel.setForeground(Color.WHITE);
+            }
+            characterLabel.setHorizontalAlignment(JLabel.CENTER);
+            deckPanel.add(characterLabel, BorderLayout.CENTER);
+
+            JButton selectButton = new JButton("Select");
+            final String deckName = deckNames[i];
+            selectButton.addActionListener(e -> {
+                selectedDeck = deckName;
+
+                // Send the selected deck to the server
+                if (chatClient != null) {
+                    chatClient.sendMessage("DeckSelected:" + selectedDeck);
+                }
+
+                System.out.println("Selected Deck: " + selectedDeck);
+                cardLayout.show(container, "GamePanel");
+            });
+            deckPanel.add(selectButton, BorderLayout.SOUTH);
+
+            add(deckPanel);
+        }
+
+        setPreferredSize(new Dimension(1000, 800));
+    }
+
+    private ImageIcon scaleImageIcon(ImageIcon icon, int width, int height) {
+        Image img = icon.getImage();
+        Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(scaledImg);
+    }
+
+    public String getSelectedDeck() {
+        return selectedDeck;
+    }
 }
+
+
