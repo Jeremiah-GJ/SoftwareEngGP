@@ -99,6 +99,44 @@ public class ChatServer extends AbstractServer {
                     sendStartGameMessage();
                 }
             }
+            // Handle opponent username propagation
+            else if (message.startsWith("LOGIN:")) {
+                String username = message.substring(6);
+                client.setInfo("username", username);
+
+                // Notify all other clients about this user
+                for (Thread clientThread : getClientConnections()) {
+                    ConnectionToClient otherClient = (ConnectionToClient) clientThread;
+                    if (!otherClient.equals(client)) { // Don't send to the same client
+                        try {
+                            // Debug log for server
+                            System.out.println("Sending opponent username to client " + otherClient.getId() + ": " + username);
+                            otherClient.sendToClient("OPPONENT:" + username);
+
+                            String otherUsername = (String) otherClient.getInfo("username");
+                            System.out.println("Sending opponent username to client " + client.getId() + ": " + otherUsername);
+                            client.sendToClient("OPPONENT:" + otherUsername);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            // Handle PING-PONG interaction
+            else if (message.equals("PING")) {
+                // Forward "PONG" to the other client
+                for (Thread clientThread : getClientConnections()) {
+                    ConnectionToClient otherClient = (ConnectionToClient) clientThread;
+                    if (!otherClient.equals(client)) { // Skip the sender
+                        try {
+                            System.out.println("Forwarding PONG to client " + otherClient.getId());
+                            otherClient.sendToClient("PONG");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
         }
 
         // Existing login logic
@@ -147,6 +185,9 @@ public class ChatServer extends AbstractServer {
             }
         }
     }
+
+
+
 
     public void testLogMessage(String message) {
         if (log != null) {

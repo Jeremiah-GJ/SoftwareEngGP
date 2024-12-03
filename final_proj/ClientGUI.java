@@ -9,7 +9,7 @@ import java.io.IOException;
 public class ClientGUI extends JFrame {
 
     public ClientGUI() {
-        ChatClient client = new ChatClient();
+        ChatClient client = new ChatClient(); // Initialize ChatClient
         client.setHost("localhost");
         client.setPort(8300);
         try {
@@ -37,7 +37,7 @@ public class ClientGUI extends JFrame {
         JPanel view4 = new SelectPanel(cardLayout, container, client);
 
         // Create the larger GamePanel with a bigger preferred size
-        GamePanel gamePanel = new GamePanel();
+        GamePanel gamePanel = new GamePanel(client); // Use the initialized client here
         gamePanel.setPreferredSize(new Dimension(1200, 800)); // Larger GamePanel size
 
         container.add(view1, "1");
@@ -70,6 +70,7 @@ public class ClientGUI extends JFrame {
         new ClientGUI();
     }
 }
+
 
 
 

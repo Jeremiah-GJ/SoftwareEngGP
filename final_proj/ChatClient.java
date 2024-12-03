@@ -1,6 +1,8 @@
 //ChatClient.java
 package final_proj;
 
+import javax.swing.SwingUtilities;
+
 import ocsf.client.AbstractClient;
 
 public class ChatClient extends AbstractClient {
@@ -24,10 +26,24 @@ public class ChatClient extends AbstractClient {
         if (arg0 instanceof String) {
             String message = (String) arg0;
 
+            // Debug log
+            System.out.println("Received message from server: " + message);
+
             if (message.equals("LoginSuccessful")) {
                 loginControl.loginSuccess();
             } else if (message.equals("CreateAccountSuccessful")) {
                 createAccountControl.createAccountSuccess();
+            } else if (message.startsWith("OPPONENT:")) {
+                String opponentUsername = message.substring(9);
+                System.out.println("Updating opponent label with username: " + opponentUsername);
+                SwingUtilities.invokeLater(() -> {
+                    GamePanel.updateOpponentLabel(opponentUsername);
+                });
+            } else if (message.equals("PONG")) {
+                // Display the interaction on the GamePanel
+                SwingUtilities.invokeLater(() -> {
+                    GamePanel.updateOpponentLabel("PONG received!");
+                });
             }
         } else if (arg0 instanceof Error) {
             Error error = (Error) arg0;
@@ -39,6 +55,9 @@ public class ChatClient extends AbstractClient {
             }
         }
     }
+
+
+
 
     // Add this method to send messages to the server
     public void sendMessage(String message) {
