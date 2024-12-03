@@ -39,7 +39,7 @@ public class ClientGUI extends JFrame {
 
         // Create the larger GamePanel with a bigger preferred size
         JPanel gamePanel = new GamePanel(gc);
-        gamePanel.setPreferredSize(new Dimension(1200, 800)); // Larger GamePanel size
+        gamePanel.setPreferredSize(new Dimension(1000, 537)); // Larger GamePanel size
 
         container.add(view1, "1");
         container.add(view2, "2");
@@ -57,17 +57,17 @@ public class ClientGUI extends JFrame {
         gbc.weightx = 1.0; // Allow horizontal expansion
         gbc.weighty = 1.0; // Allow vertical expansion
         gbc.anchor = GridBagConstraints.CENTER; // Align in the center of the cell
-        container.setSize(1200, 800);
+        container.setSize(1000, 537);
         this.add(container,gbc);
 
         // Set frame size to match the default size of other panels
-        this.setSize(1200, 800); // Default dimensions
+        this.setSize(1000, 537); // Default dimensions
         this.setResizable(false); // Disable resizing for consistent appearance
 
         // Add a component listener to dynamically resize the frame when showing GamePanel
         gamePanel.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
-                setSize(1200, 800);
+                setSize(1000, 537);
                 setResizable(false); // Prevent resizing during gameplay
             }
         });
