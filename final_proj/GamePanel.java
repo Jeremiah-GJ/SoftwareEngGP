@@ -120,13 +120,11 @@ setLayout(null);
 		JButton LPA = new JButton("+");
 		LPA.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		LPA.setBounds(10, 460, 45, 25);
+		LPA.setName("add");
 		add(LPA);
 		
 		JButton LPS = new JButton("-");
-		LPS.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
+		LPS.setName("remove");
 		LPS.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		LPS.setBounds(67, 462, 45, 23);
 		add(LPS);
@@ -158,6 +156,7 @@ setLayout(null);
 		JButton CancelButton = new JButton("Cancel Action");
 		CancelButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		CancelButton.setBounds(641, 454, 131, 37);
+		CancelButton.setName("cancel");
 		add(CancelButton);
 		
 		JButton Card1 = new JButton("Select");
@@ -167,10 +166,6 @@ setLayout(null);
 		add(Card1);
 		
 		JButton Card2 = new JButton("Select");
-		Card2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
 		Card2.setBounds(271, 476, 69, 21);
 		Card2.setName("H2");
 		add(Card2);
@@ -206,6 +201,7 @@ setLayout(null);
 		
 		JButton DrawCard = new JButton("Draw ");
 		DrawCard.setBounds(844, 476, 73, 21);
+		DrawCard.setName("draw");
 		add(DrawCard);
 		
 		JLabel GY = new JLabel(Plg);
@@ -353,10 +349,12 @@ setLayout(null);
 		
 		JButton GYButton = new JButton("Send GY");
 		GYButton.setBounds(826, 364, 85, 21);
+		GYButton.setName("grave");
 		add(GYButton);
 		
 		JButton sendBanish = new JButton("Banish");
 		sendBanish.setBounds(826, 317, 85, 21);
+		sendBanish.setName("banish");
 		add(sendBanish);
 		
 		JLabel SelectedCard = new JLabel(Sel);
@@ -366,10 +364,84 @@ setLayout(null);
 	}
 	
 	
-	
-	 public void updateLabel(String newText) {
-		 PlayerLP.setText(newText);
-	    }
+	 
+	 public void summonZ1() {
+		 
+	 }
+	 public void summonZ2() {
+		 
+	 }
+	 public void summonZ3() {
+		 
+	 }
+	 public void selectZ1() {
+		 
+	 }
+	 public void selectZ2() {
+		 
+	 }
+	 public void selectZ3() {
+		 
+	 }
+	 public void setSz1() {
+		 
+	 }
+	 public void setSz2() {
+		 
+	 }
+	 public void setSz3() {
+		 
+	 }
+	 public void playSz1() {
+		 
+	 }
+	 public void playSz2() {
+		 
+	 }
+	 public void playSz3() {
+		 
+	 }
+	 public void selectSz1() {
+		 
+	 }
+	 public void selectSz2() {
+		 
+	 }
+	 public void selectSz3() {
+		 
+	 }
+	 
+	 public void gainLP() {
+		 
+	 }
+	 public void removeLP() {
+		 
+	 }
+	 public void SelectC1(){
+		 
+	 }
+	 
+	 public void SelectC2(){
+		 
+	 }
+	 public void SelectC3(){
+		 
+	 }
+     public void SelectC4(){
+		 
+	 }
+	 
+	 public void SelectC5(){
+		 
+	 }
+	 public void SelectC6(){
+		 
+	 }
+	 public void cancel() {
+		 
+	 }
+	 
+	 
 }
 
 
