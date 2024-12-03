@@ -50,8 +50,15 @@ public class ClientGUI extends JFrame {
         cardLayout.show(container, "1");
 
         this.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH; // Make the component fill both horizontally and vertically
+        gbc.gridx = 0; // First column
+        gbc.gridy = 0; // First row
+        gbc.weightx = 1.0; // Allow horizontal expansion
+        gbc.weighty = 1.0; // Allow vertical expansion
+        gbc.anchor = GridBagConstraints.CENTER; // Align in the center of the cell
         container.setSize(1200, 800);
-        this.add(container);
+        this.add(container,gbc);
 
         // Set frame size to match the default size of other panels
         this.setSize(1200, 800); // Default dimensions
