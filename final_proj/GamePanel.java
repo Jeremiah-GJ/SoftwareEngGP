@@ -161,7 +161,9 @@ setLayout(null);
 		add(CancelButton);
 		
 		JButton Card1 = new JButton("Select");
+		Card1.setName("H1");
 		Card1.setBounds(188, 476, 73, 21);
+		
 		add(Card1);
 		
 		JButton Card2 = new JButton("Select");
@@ -170,22 +172,27 @@ setLayout(null);
 			}
 		});
 		Card2.setBounds(271, 476, 69, 21);
+		Card2.setName("H2");
 		add(Card2);
 		
 		JButton Card3 = new JButton("Select");
 		Card3.setBounds(342, 476, 73, 21);
+		Card3.setName("H3");
 		add(Card3);
 		
 		JButton Card4 = new JButton("Select");
 		Card4.setBounds(409, 476, 73, 21);
+		Card4.setName("H4");
 		add(Card4);
 		
 		JButton Card5 = new JButton("Select");
 		Card5.setBounds(479, 476, 73, 21);
+		Card5.setName("H5");
 		add(Card5);
 		
 		JButton Card6 = new JButton("Select");
 		Card6.setBounds(550, 476, 73, 21);
+		Card6.setName("H6");
 		add(Card6);
 		
 		JLabel PLlibrary = new JLabel(PLl);
@@ -241,38 +248,47 @@ setLayout(null);
 		
 		JButton Summon = new JButton("Summon");
 		Summon.setBounds(117, 228, 92, 21);
+		Summon.setName("MZB1");
 		add(Summon);
 		
 		JButton Summon2 = new JButton("Summon");
 		Summon2.setBounds(282, 228, 92, 21);
+		Summon.setName("MZB2");
 		add(Summon2);
 		
 		JButton Summon3 = new JButton("Summon");
 		Summon3.setBounds(447, 228, 80, 21);
+		Summon.setName("MZB3");
 		add(Summon3);
 		
 		JButton Sset1 = new JButton("Set");
 		Sset1.setBounds(128, 317, 73, 21);
+		Sset1.setName("S1S");
 		add(Sset1);
 		
 		JButton Sset2 = new JButton("Set");
 		Sset2.setBounds(294, 317, 73, 21);
+		Sset2.setName("S2S");
 		add(Sset2);
 		
 		JButton Sset3 = new JButton("Set");
 		Sset3.setBounds(447, 317, 73, 21);
+		Sset3.setName("S3S");
 		add(Sset3);
 		
 		JButton Splay1 = new JButton("Play");
 		Splay1.setBounds(128, 346, 73, 21);
+		Splay1.setName("Splay1");
 		add(Splay1);
 		
 		JButton Splay2 = new JButton("Play");
 		Splay2.setBounds(294, 346, 73, 21);
+		Splay2.setName("Splay2");
 		add(Splay2);
 		
 		JButton Splay3 = new JButton("Play");
 		Splay3.setBounds(447, 346, 73, 21);
+		Splay1.setName("Splay3");
 		add(Splay3);
 		
 		JLabel OZ1 = new JLabel(OMz1);
@@ -307,26 +323,32 @@ setLayout(null);
 		
 		JButton SelectC1 = new JButton("Select");
 		SelectC1.setBounds(129, 254, 72, 21);
+		SelectC1.setName("C1Sel");
 		add(SelectC1);
 		
 		JButton SelectC2 = new JButton("Select");
 		SelectC2.setBounds(296, 254, 71, 21);
+		SelectC2.setName("C2Sel");
 		add(SelectC2);
 		
 		JButton SelectC3 = new JButton("Select");
 		SelectC3.setBounds(448, 254, 72, 21);
+		SelectC3.setName("C3Sel");
 		add(SelectC3);
 		
 		JButton SelectC2_1 = new JButton("Select");
 		SelectC2_1.setBounds(129, 368, 70, 21);
+		SelectC2_1.setName("S1Sel");
 		add(SelectC2_1);
 		
 		JButton SelectC2_2 = new JButton("Select");
 		SelectC2_2.setBounds(294, 368, 73, 21);
+		SelectC2_2.setName("S2Sel");
 		add(SelectC2_2);
 		
 		JButton SelectC2_3 = new JButton("Select");
 		SelectC2_3.setBounds(448, 368, 72, 21);
+		SelectC2_3.setName("S3Sel");
 		add(SelectC2_3);
 		
 		JButton GYButton = new JButton("Send GY");
